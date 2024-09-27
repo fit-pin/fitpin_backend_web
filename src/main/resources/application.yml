@@ -1,0 +1,26 @@
+#DB ??
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:33306/fitpin_web
+    username: admin
+    password: hmmrds0506
+
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+ssh:
+  host: fitpitback.kro.kr
+  ssh_port: 22
+  user: ubuntu
+  private_key: src/main/resources/dbssh/AWSkey.ppk
+  database_port: 3307
