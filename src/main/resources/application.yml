@@ -1,4 +1,4 @@
-#DB ??
+#DB 연동
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -11,12 +11,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+file:
+  upload-dir: src/main/resources/inquiryImg
 
 ssh:
   host: fitpitback.kro.kr

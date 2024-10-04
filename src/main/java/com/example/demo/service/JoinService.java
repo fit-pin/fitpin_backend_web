@@ -33,14 +33,6 @@ public class JoinService {
         String address2 = joinDTO.getAddress2();
         String phone = joinDTO.getPhone();
 
-//        //아이디 중복검사
-//        Boolean isExist = userRepository.existsByUsername(joinDTO.getUsername());
-//        if (isExist) {
-//            System.out.println("중복아이디 입니다.");
-//            return;
-//        }else
-//            System.out.println(username + "님이 가입하였습니다.");
-
         UserEntity data = new UserEntity();
 
         data.setUsername(username);

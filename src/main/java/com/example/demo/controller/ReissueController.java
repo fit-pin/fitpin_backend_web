@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @ResponseBody
@@ -33,13 +35,16 @@ public class ReissueController {
         //get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
+        if(cookies != null){
+            for (Cookie cookie : cookies) {
 
-            if (cookie.getName().equals("refresh")) {
+                if (cookie.getName().equals("refresh")) {
 
-                refresh = cookie.getValue();
+                    refresh = cookie.getValue();
+                }
             }
         }
+
 
         if (refresh == null) {
 
@@ -47,13 +52,14 @@ public class ReissueController {
             return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
         }
 
-        //expired check
+        //Refresh token이 만료되었는지 확인
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-
             //response status code
             return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
@@ -76,11 +82,18 @@ public class ReissueController {
         refreshRepository.deleteByRefresh(refresh);
         addRefreshEntity(userId, newRefresh, 86400000L);
 
-        //response
+        //새로운 Access Token 응답에 포함
         response.setHeader("access", newAccess);
+
+        //쿠키에 새로운 Refresh token 추가
         response.addCookie(createCookie("refresh", newRefresh));
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        // 응답 바디에 새 토큰 정보 전달
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access", newAccess);
+        tokens.put("refresh", newRefresh);
+
+        return new ResponseEntity<>(tokens,HttpStatus.OK);
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
@@ -99,9 +112,9 @@ public class ReissueController {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
+        cookie.setPath("/");
 
         return cookie;
     }
