@@ -30,6 +30,8 @@ public class InquiryController {
             @RequestParam("queryType") String queryType,
             @RequestParam("subject") String subject,
             @RequestParam("queryContent") String queryContent,
+            @RequestParam("privacy") String privacy,
+            @RequestParam("password") String password,
             @RequestParam(value = "attachment", required = false) MultipartFile attachment) {
 
         String filePath = null;
@@ -43,7 +45,7 @@ public class InquiryController {
         }
 
         // 데이터베이스에 저장
-        InquiryEntity inquiry = new InquiryEntity(name, queryType, subject, queryContent, filePath);
+        InquiryEntity inquiry = new InquiryEntity(name, queryType, subject, queryContent, filePath, privacy, password);
         inquiryService.saveInquiry(inquiry);
 
         return "문의가 성공적으로 등록되었습니다.";

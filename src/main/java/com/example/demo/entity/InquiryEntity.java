@@ -19,16 +19,20 @@ public class InquiryEntity {
     private String queryType;
     private String subject;
     private String queryContent;
-    private String attachmentPath; // 첨부 파일 경로
+    private String attachmentPath;
+    private String privacy;
+    private String password;
 
     public InquiryEntity() {}
 
-    public InquiryEntity(String name, String queryType, String subject, String queryContent, String attachmentPath) {
+    public InquiryEntity(String name, String queryType, String subject, String queryContent, String attachmentPath,  String privacy, String password) {
         this.name = name;
         this.queryType = queryType;
         this.subject = subject;
         this.queryContent = queryContent;
         this.attachmentPath = attachmentPath;
+        this.privacy = privacy;
+        this.password = password;
     }
 
 }
