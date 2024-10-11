@@ -2,6 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.InquiryEntity;
 import com.example.demo.service.InquiryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,10 +54,20 @@ public class InquiryController {
         return "문의가 성공적으로 등록되었습니다.";
     }
 
+    @GetMapping
+    public Page<InquiryEntity> getInquiries(
+            @RequestParam(defaultValue = "0") int page,  // 페이지 번호 (0부터 시작)
+            @RequestParam(defaultValue = "5") int size   // 한 페이지에 표시할 목록 수
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return inquiryService.getInquiriesWithPagination(pageable);
+    }
+
     private String saveFile(MultipartFile file) throws IOException {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path path = Paths.get(uploadDir + File.separator + fileName);
         Files.copy(file.getInputStream(), path);
         return path.toString(); // 파일 경로 반환
     }
+
 }

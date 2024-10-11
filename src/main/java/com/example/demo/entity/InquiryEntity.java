@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +24,7 @@ public class InquiryEntity {
     private String attachmentPath;
     private String privacy;
     private String password;
+    private LocalDate createdAt;
 
     public InquiryEntity() {}
 
@@ -35,4 +38,8 @@ public class InquiryEntity {
         this.password = password;
     }
 
+    @PrePersist
+    public void onPrePersist() {
+        this.createdAt = LocalDate.now(); // 현재 날짜와 시간 설정
+    }
 }
