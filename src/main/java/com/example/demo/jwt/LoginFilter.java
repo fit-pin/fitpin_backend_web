@@ -88,7 +88,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //응답 설정
         response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.addCookie(createCookie("refresh", refresh, request, response)); // response 추가
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -110,13 +110,24 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(401);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private Cookie createCookie(String key, String value,HttpServletRequest request, HttpServletResponse response) {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+
+        // SameSite 속성을 헤더에 추가
+        String sameSite = "SameSite=None";
+        response.setHeader("Set-Cookie", String.format("%s=%s; Max-Age=%d; Path=%s; Secure=%s; HttpOnly; %s",
+                cookie.getName(),
+                cookie.getValue(),
+                cookie.getMaxAge(),
+                cookie.getPath(),
+                cookie.getSecure() ? "true" : "false",
+                sameSite)
+        );
 
         return cookie;
     }
