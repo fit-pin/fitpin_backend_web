@@ -71,7 +71,6 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedOrigins(Collections.singletonList("http://fitpin-web-back.kro.kr"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
