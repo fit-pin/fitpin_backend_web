@@ -86,9 +86,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //Refresh 토큰 저장
         addRefreshEntity(username, refresh, 86400000L); //24시간
 
-        //응답 설정
+        // 쿠키 설정
+        Cookie refreshCookie = createCookie("refresh", refresh);
+        response.addCookie(refreshCookie);
+
+        // SameSite 속성을 추가하는 Set-Cookie 헤더 추가
+        response.addHeader("Set-Cookie", refreshCookie.getName() + "=" + refreshCookie.getValue() + "; Path=/; HttpOnly; SameSite=None; Secure");
         response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -114,9 +118,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
 
         return cookie;
     }
