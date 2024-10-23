@@ -87,7 +87,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         addRefreshEntity(username, refresh, 86400000L); //24시간
 
         //응답 설정
-        response.setHeader("access", access);
+        response.addCookie(createCookie("access", access));
         response.addCookie(createCookie("refresh", refresh)); // response 추가
         response.setStatus(HttpStatus.OK.value());
     }

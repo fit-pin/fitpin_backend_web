@@ -46,11 +46,15 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //get refresh token
         String refresh = null;
+        String access = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
 
             if (cookie.getName().equals("refresh")) {
                 refresh = cookie.getValue();
+            }
+            if (cookie.getName().equals("access")) {
+                access = cookie.getValue();
             }
         }
 
@@ -95,11 +99,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
         refreshRepository.deleteByRefresh(refresh);
 
         //Refresh 토큰 Cookie 값 0
-        Cookie cookie = new Cookie("refresh", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
+        Cookie refreshCookie  = new Cookie("refresh", null);
+        refreshCookie.setMaxAge(0);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
 
-        response.addCookie(cookie);
+        Cookie accessCookie = new Cookie("access", null);
+        accessCookie.setMaxAge(0);  // 만료 시간 0으로 설정
+        accessCookie.setPath("/");
+        response.addCookie(accessCookie);
+
         response.setStatus(HttpServletResponse.SC_OK);
 
     }
