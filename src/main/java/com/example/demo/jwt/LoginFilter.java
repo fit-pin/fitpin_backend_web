@@ -31,6 +31,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private RefreshRepository refreshRepository;
 
+    private boolean isSecureCookie;
+
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
 
         this.authenticationManager = authenticationManager;
@@ -87,8 +89,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         addRefreshEntity(username, refresh, 86400000L); //24시간
 
         //응답 설정
-        response.addCookie(createCookie("access", access));
-        response.addCookie(createCookie("refresh", refresh)); // response 추가
+        response.addCookie(createCookie("access", access,600));
+        response.addCookie(createCookie("refresh", refresh, 86400)); // response 추가
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -110,14 +112,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(401);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private Cookie createCookie(String key, String value, int maxAgeSeconds) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setSecure(true);
+        cookie.setMaxAge(maxAgeSeconds);  // 쿠키 만료 시간 설정
+        cookie.setHttpOnly(true);  // 자바스크립트로 접근 불가
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setAttribute("SameSite", "None");
+
+        // 개발 환경에서는 Secure 속성을 적용하지 않음
+        if (isSecureCookie) {
+            cookie.setSecure(true);  // Secure 속성 적용
+            cookie.setAttribute("SameSite", "None");  // 쿠키 공유를 위해 SameSite 설정
+        }
 
         return cookie;
     }
