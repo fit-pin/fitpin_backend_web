@@ -83,7 +83,7 @@ public class ReissueController {
         addRefreshEntity(userId, newRefresh, 86400000L);
 
         //새로운 Access Token 응답에 포함
-        response.addCookie(createCookie("access", newAccess));
+        response.setHeader("access", newAccess);
 
         //쿠키에 새로운 Refresh token 추가
         response.addCookie(createCookie("refresh", newRefresh));
@@ -115,7 +115,6 @@ public class ReissueController {
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setAttribute("SameSite", "None");
 
         return cookie;
     }
