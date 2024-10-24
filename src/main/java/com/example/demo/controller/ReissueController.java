@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
@@ -31,22 +32,26 @@ public class ReissueController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        //get refresh token
-        String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null){
-            for (Cookie cookie : cookies) {
+    public ResponseEntity<?> reissue(@RequestBody Map<String, String> requestBody, HttpServletResponse response) {
 
-                if (cookie.getName().equals("refresh")) {
+        // 클라이언트로부터 요청 본문에서 refresh 토큰 가져오기
+        String refresh = requestBody.get("refreshToken");
 
-                    refresh = cookie.getValue();
-                }
-            }
-        }
+        // 쿠키 사용 X
+//        String refresh = null;
+//        Cookie[] cookies = request.getCookies();
+//        if(cookies != null){
+//            for (Cookie cookie : cookies) {
+//
+//                if (cookie.getName().equals("refresh")) {
+//
+//                    refresh = cookie.getValue();
+//                }
+//            }
+//        }
 
 
-        if (refresh == null) {
+        if (refresh == null || refresh.isEmpty()) {
 
             //response status code
             return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
@@ -86,7 +91,8 @@ public class ReissueController {
         response.setHeader("access", newAccess);
 
         //쿠키에 새로운 Refresh token 추가
-        response.addCookie(createCookie("refresh", newRefresh));
+        //쿠키 사용 X
+//        response.addCookie(createCookie("refresh", newRefresh));
 
         // 응답 바디에 새 토큰 정보 전달
         Map<String, String> tokens = new HashMap<>();
@@ -108,14 +114,15 @@ public class ReissueController {
         refreshRepository.save(refreshEntity);
     }
 
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-
-        return cookie;
-    }
+    // 쿠키사용 X
+//    private Cookie createCookie(String key, String value) {
+//
+//        Cookie cookie = new Cookie(key, value);
+//        cookie.setMaxAge(24*60*60);
+//        cookie.setSecure(true);
+//        cookie.setHttpOnly(true);
+//        cookie.setPath("/");
+//
+//        return cookie;
+//    }
 }

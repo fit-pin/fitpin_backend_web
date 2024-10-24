@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.GenericFilterBean;
@@ -46,6 +45,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //get refresh token
         String refresh = request.getHeader("Authorization");
+
+        // 서버배포시 쿠키사용 오류로 사용 X
 //        String refresh = null;
 //        Cookie[] cookies = request.getCookies();
 //        for (Cookie cookie : cookies) {
@@ -95,6 +96,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         //Refresh 토큰 DB에서 제거
         refreshRepository.deleteByRefresh(refresh);
 
+        // 서버배포시 쿠키사용 오류로 사용 X
         //Refresh 토큰 Cookie 값 0
 //        Cookie cookie = new Cookie("refresh", null);
 //        cookie.setMaxAge(0);
