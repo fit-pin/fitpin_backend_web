@@ -69,7 +69,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     //Authorization: 타입 인증토큰
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         //유저 정보
         String username = authentication.getName();
@@ -88,8 +88,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //응답 설정
         response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh)); // response 추가
+        //response.addCookie(createCookie("refresh", refresh)); // response 추가
         response.setStatus(HttpStatus.OK.value());
+
+        // Refresh 토큰을 JSON 형식으로 응답 본문에 추가
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", access);
+        tokens.put("refreshToken", refresh);
+
+        // JSON 형식으로 응답
+        response.setContentType("application/json");
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
