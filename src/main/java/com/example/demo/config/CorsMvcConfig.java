@@ -13,7 +13,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
 
         corsRegistry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000","http://fitpin-web-back.kro.kr"
-                        ,"https://fit-pin.github.io")
+                        ,"https://fit-pin.github.io", "http://localhost/")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true)

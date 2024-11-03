@@ -9,11 +9,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
-@RequiredArgsConstructor
 @Component
 public class WebSocketServer extends TextWebSocketHandler {
     
@@ -21,24 +16,24 @@ public class WebSocketServer extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info(session.getId() +": 세션 연결됨");
+        System.out.println(session.getId() +": 세션 연결됨");
         client.put(session.getId(), session);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        log.info(session.getId() +": 세션 종료됨");
+        System.out.println(session.getId() +": 세션 종료됨");
         super.afterConnectionClosed(session, status);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.info(session.getId()+": "+ message.getPayload());
+        System.out.println(session.getId()+": "+ message.getPayload());
         client.forEach((k, v) -> {
             try {
                 v.sendMessage(message);
             } catch (Exception e) {
-                log.info("메시지 전송 실패");
+                System.out.println("메시지 전송 실패");
             }
         });
     }
