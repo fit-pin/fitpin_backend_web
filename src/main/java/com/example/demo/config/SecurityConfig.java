@@ -71,7 +71,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://fitpin-web-back.kro.kr"
-                                                                    ,"https://fit-pin.github.io"));
+                                                                    ,"https://fit-pin.github.io", "http://localhost"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
@@ -101,6 +101,10 @@ public class SecurityConfig {
                         .requestMatchers("/token","/inquiry/**","list","/inquiryImg/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
+                        // 웹 소켓 안되는게 이거 문제였누...
+                        .requestMatchers("/sock").permitAll()
+                        .requestMatchers("/action").permitAll()
+                        .requestMatchers("/recv").permitAll()
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
