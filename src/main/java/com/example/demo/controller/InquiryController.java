@@ -56,6 +56,7 @@ public class InquiryController {
         }
     }
 
+    // 문의등록
     @PostMapping
     public String submitInquiry(
             @RequestParam("name") String name,
@@ -157,22 +158,16 @@ public class InquiryController {
     // 삭제 기능
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInquiry(
-            @PathVariable("id") Long id,
-            @RequestParam("password") String password // 사용자로부터 받은 비밀번호
+            @PathVariable("id") Long id
     ) {
         try {
             InquiryEntity inquiry = inquiryService.getInquiryById(id); // 특정 문의 조회
 
-            // 비밀번호 검증
-            if (inquiry.getPassword().equals(password)) {
-                if (inquiry.getAttachmentPath() != null) {
-                    deleteFile(inquiry.getAttachmentPath()); // 파일 삭제
-                }
-                inquiryService.deleteInquiry(id); // 비밀번호가 맞으면 삭제
-                return ResponseEntity.ok("문의가 성공적으로 삭제되었습니다.");
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("비밀번호가 맞지 않습니다.");
+            if (inquiry.getAttachmentPath() != null) {
+                deleteFile(inquiry.getAttachmentPath()); // 파일 삭제
             }
+            inquiryService.deleteInquiry(id); // 삭제
+            return ResponseEntity.ok("문의가 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("삭제 중 오류가 발생했습니다: " + e.getMessage());
