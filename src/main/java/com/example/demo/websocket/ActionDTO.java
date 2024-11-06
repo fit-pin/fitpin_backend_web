@@ -9,8 +9,8 @@ import lombok.Setter;
 /**
  * 서버가 클라이언트에게 전송하는 JSON
  */
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public class ActionDTO {
     private String userEmail;
     private String userName;
@@ -30,4 +30,26 @@ public class ActionDTO {
         int qty;
         boolean pitStatus;
     }
+}
+
+@Getter
+@Setter
+/**
+ * 제품 매핑용
+ */
+class ActionDTOMappper {
+    private int auctionId;
+    private String userEmail;
+    private String userName;
+    private String userAddr;
+    private String userNumber;
+    private int itemTotal;
+    private String userAddrDetail;
+    
+    private int itemKey;
+    private String itemName;
+    private String itemSize;
+    private int itemPrice;
+    private int qty;
+    private boolean pitStatus;
 }

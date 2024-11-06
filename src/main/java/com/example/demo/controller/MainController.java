@@ -49,7 +49,7 @@ public class MainController {
         itemList.setPitStatus(false);
         list.add(itemList);
 
-        webScoketController.sendClient(
+        webScoketController.sendBuyItem(
                 new ActionDTO("da864268@naver.com", "석정현", "서울특별시 구로구 경인로 445", "010-1234-1234", 1, "3호관", list));
 
         return "main Controller : " + name + " / " + role;
