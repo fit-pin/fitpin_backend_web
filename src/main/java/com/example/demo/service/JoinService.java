@@ -6,6 +6,8 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 //회원가입
 @Service
 public class JoinService {
@@ -43,6 +45,7 @@ public class JoinService {
         data.setAddress1(address1);
         data.setAddress2(address2);
         data.setPhone(phone);
+        data.setJoinDate(LocalDate.now());
 
         userRepository.save(data);
     }

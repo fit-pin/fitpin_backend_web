@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Data
@@ -30,5 +32,7 @@ public class JoinDTO {
 
     @NotBlank(message = "전화번호는 필수 입력사항 입니다.")
     private String phone;
+
+    private LocalDate joinDate;
 
 }

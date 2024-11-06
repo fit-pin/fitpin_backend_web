@@ -21,8 +21,8 @@ public class UserController {
     }
 
     // 특정 사용자 조회
-    @GetMapping("/{id}")
-    public UserEntity getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
+    @GetMapping("/{username}")
+    public UserEntity getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username);
     }
 }
