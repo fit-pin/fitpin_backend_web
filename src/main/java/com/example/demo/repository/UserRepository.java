@@ -2,8 +2,10 @@ package com.example.demo.repository;
 
 import com.example.demo.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 //회원정보를 담을 객체
+@Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     //회원정보를 중복검증하는 멤소드
     Boolean existsByUsername(String username);
