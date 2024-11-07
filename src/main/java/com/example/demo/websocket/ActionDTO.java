@@ -44,15 +44,16 @@ public class ActionDTO {
         public static class PitItemOrder {
             String itemType;
             String itemSize;
-            float itemHeight;
-            float itemShoulder;
-            float itemChest;
-            float itemSleeve;
-            float frontrise;
-            float itemWaists;
-            float itemThighs;
-            float itemHemWidth;
-            float itemhipWidth;
+
+            Float itemHeight = null;
+            Float itemShoulder = null;
+            Float itemChest = null;
+            Float itemSleeve = null;
+            Float frontrise = null;
+            Float itemWaists = null;
+            Float itemThighs = null;
+            Float itemHemWidth = null;
+            Float itemhipWidth = null;
         }
     }
 }
@@ -81,4 +82,11 @@ class ActionDTOMappper {
 
     @Nullable
     PitItemOrder pitItemOrder;
+}
+
+@Getter
+@Setter
+@AllArgsConstructor
+class ActionTimeDTO {
+    private int Actiontime;
 }

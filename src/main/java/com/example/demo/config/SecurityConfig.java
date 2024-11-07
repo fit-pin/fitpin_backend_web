@@ -71,7 +71,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://fitpin-web-back.kro.kr"
-                                                                    ,"https://fit-pin.github.io", "http://localhost"));
+                                                                    ,"https://fit-pin.github.io", "http://localhost", "http://korseok.kro.kr"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
@@ -105,6 +105,7 @@ public class SecurityConfig {
                         .requestMatchers("/sock").permitAll()
                         .requestMatchers("/action").permitAll()
                         .requestMatchers("/recv").permitAll()
+                        .requestMatchers("/weborder").permitAll()
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
