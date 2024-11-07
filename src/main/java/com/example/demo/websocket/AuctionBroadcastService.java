@@ -3,6 +3,8 @@ package com.example.demo.websocket;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class AuctionBroadcastService {
+    private static final String AuctionSend = "/action/Auction/";
+
     private ActionDTOMappper service;
     private SimpMessagingTemplate messagingTemplate;
 

@@ -1,5 +1,6 @@
 package com.example.demo.websocket;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebScoketController {
 
 	private final SimpMessagingTemplate messagingTemplate;
-	private final HashMap<Integer, List<ActionDTOMappper>> auctionRoom = new HashMap<>();
+	private final List<ActionDTOMappper> auctionRoom = new ArrayList<>();
 
 	private static int conut;
 
@@ -64,10 +65,11 @@ public class WebScoketController {
 
 			actionDTO.setPitItemOrder(item.pitItemOrder);
 
+			conut++;
 			return actionDTO;
 		}).map(ActionDTOMappper.class::cast).toList();
 
-		auctionRoom.put(conut, listMap);
+		auctionRoom.addAll(listMap);
 
 		try {
 			String mp = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(listMap);
@@ -76,6 +78,5 @@ public class WebScoketController {
 		}
 
 		messagingTemplate.convertAndSend("/action/buyItem", listMap);
-		conut++;
 	}
 }
