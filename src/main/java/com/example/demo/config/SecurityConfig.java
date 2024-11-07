@@ -106,6 +106,7 @@ public class SecurityConfig {
                         .requestMatchers("/action").permitAll()
                         .requestMatchers("/recv").permitAll()
                         .requestMatchers("/weborder").permitAll()
+                        .requestMatchers("/auction_listener").permitAll()
                         .anyRequest().authenticated());
 
         //JWTFilter 등록

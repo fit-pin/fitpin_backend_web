@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,10 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.websocket.ActionDTO;
 import com.example.demo.websocket.WebScoketController;
-import com.example.demo.websocket.ActionDTO.ItemList;
-import com.example.demo.websocket.ActionDTO.ItemList.PitItemOrder;
 
 @RestController
 @Controller
@@ -26,6 +21,9 @@ public class MainController {
 
     @Autowired
     public WebScoketController webScoketController;
+
+    @Autowired 
+    public AppNotificationController appNotificationController;
 
     @GetMapping("/")
     public String mainP() {
@@ -40,7 +38,8 @@ public class MainController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        return "main Controller : " + name + " / " + role;
+        appNotificationController.sendNotification("hello");
 
+        return "main Controller : " + name + " / " + role;
     }
 }
