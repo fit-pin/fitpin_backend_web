@@ -1,6 +1,9 @@
 package com.example.demo.websocket;
 
+import java.time.LocalDateTime;
+
 import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -19,4 +22,7 @@ class RecvPrice {
     private String token;
     private String company;
     private int price;
+
+    @Setter
+    private LocalDateTime  time; 
 }

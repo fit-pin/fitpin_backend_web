@@ -1,5 +1,6 @@
 package com.example.demo.websocket;
 
+import java.time.LocalDateTime;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class AuctionBroadcastService {
@@ -30,6 +31,7 @@ public class AuctionBroadcastService {
     }
 
     public void sendPrice(RecvPrice body) {
+        body.setTime(LocalDateTime.now());
         messagingTemplate.convertAndSend(sendUrl+"/price", body);
     }
 
