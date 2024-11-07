@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.websocket.ActionDTO;
 import com.example.demo.websocket.WebScoketController;
 import com.example.demo.websocket.ActionDTO.ItemList;
+import com.example.demo.websocket.ActionDTO.ItemList.PitItemOrder;
 
 @RestController
 @Controller
@@ -39,18 +40,28 @@ public class MainController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
+        PitItemOrder pitItemOrder = new PitItemOrder();
+        pitItemOrder.setItemType("상의");
+        pitItemOrder.setItemSize("M");
+        pitItemOrder.setItemHeight(73);
+        pitItemOrder.setItemShoulder(64);
+        pitItemOrder.setItemChest(64);
+        pitItemOrder.setItemSleeve(65);
+
         List<ItemList> list = new ArrayList<>();
         ItemList itemList = new ItemList();
         itemList.setItemKey(6);
         itemList.setItemName("피그먼트 롱슬리브");
         itemList.setItemSize("M");
         itemList.setItemPrice(2000);
+        itemList.setPitPrice(2500);
         itemList.setQty(1);
-        itemList.setPitStatus(false);
+        itemList.setPitStatus(true);
+        itemList.setPitItemOrder(pitItemOrder);
         list.add(itemList);
 
         webScoketController.sendBuyItem(
-                new ActionDTO("da864268@naver.com", "석정현", "서울특별시 구로구 경인로 445", "010-1234-1234", 1, "3호관", list));
+                new ActionDTO("da864268@naver.com", "석정현", "서울특별시 구로구 경인로 445", "3호관", "010-1234-1234", 1, list));
 
         return "main Controller : " + name + " / " + role;
 

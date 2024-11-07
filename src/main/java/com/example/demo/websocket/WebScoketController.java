@@ -1,8 +1,10 @@
 package com.example.demo.websocket;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -19,21 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 public class WebScoketController {
 
 	private final SimpMessagingTemplate messagingTemplate;
+	private final HashMap<Integer, List<ActionDTOMappper>> auctionRoom = new HashMap<>();
 
 	private static int conut;
 
 	// 클라이언트 메시지가 전송되는 곳
 	// 이때 경로는 setApplicationDestinationPrefixes+설정값 즉 /recv/
-	// repair=수선 페이지
-	@MessageMapping("/repair")
-	private void repairConnect(RecvDTO message) throws Exception {
-		log.info("클라이언트 접속: " + message.getToken());
-	}
-
 	// Auction=경매 페이지
 	@MessageMapping("/Auction/{auctionId}")
-	private void AuctionConnect(int AuctionId) throws Exception {
-		log.info("경매 접속: " + AuctionId);
+	private void AuctionConnect(@DestinationVariable int auctionId) throws Exception {
+		log.info("경매 접속: " + auctionId);
+		messagingTemplate.convertAndSend("/action/Auction/" + auctionId);
 	}
 
 	/**
@@ -48,7 +46,7 @@ public class WebScoketController {
 		List<ActionDTOMappper> listMap = stream.map((item) -> {
 			ActionDTOMappper actionDTO = new ActionDTOMappper();
 
-			actionDTO.setAuctionId(conut++);
+			actionDTO.setAuctionId(conut);
 			actionDTO.setUserEmail(sendData.getUserEmail());
 			actionDTO.setUserName(sendData.getUserName());
 			actionDTO.setUserAddr(sendData.getUserAddr());
@@ -60,17 +58,24 @@ public class WebScoketController {
 			actionDTO.setItemName(item.itemName);
 			actionDTO.setItemSize(item.itemSize);
 			actionDTO.setItemPrice(item.itemPrice);
+			actionDTO.setPitPrice(item.pitPrice);
 			actionDTO.setQty(item.qty);
 			actionDTO.setPitStatus(item.pitStatus);
 
+			actionDTO.setPitItemOrder(item.pitItemOrder);
+
 			return actionDTO;
 		}).map(ActionDTOMappper.class::cast).toList();
+
+		auctionRoom.put(conut, listMap);
 
 		try {
 			String mp = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(listMap);
 			System.out.println(mp);
 		} catch (Exception e) {
 		}
+
 		messagingTemplate.convertAndSend("/action/buyItem", listMap);
+		conut++;
 	}
 }
