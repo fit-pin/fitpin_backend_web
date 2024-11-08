@@ -38,8 +38,6 @@ public class MainController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        appNotificationController.sendNotification("hello");
-
         return "main Controller : " + name + " / " + role;
     }
 }
