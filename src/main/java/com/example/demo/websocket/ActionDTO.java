@@ -1,11 +1,13 @@
 package com.example.demo.websocket;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import com.example.demo.websocket.ActionDTO.ItemList.PitItemOrder;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -59,6 +61,13 @@ public class ActionDTO {
 }
 
 @Getter
+@AllArgsConstructor
+class Repairlist {
+    private AuctionData auctionData;
+    private HashMap<String, String> userList;
+}
+
+@Getter
 @Setter
 /**
  * 제품 매핑용
@@ -86,7 +95,22 @@ class ActionDTOMappper {
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)  //null인 객체는 자동으로 아무것도 반환하지 않게
+class AuctionData {
+    private ActionDTOMappper actionData = null;
+    private RecvPrice recvPrice = null;
+    private String state = State.AUCTION_CREATE.name();
+}
+
+@Getter
+@Setter
 @AllArgsConstructor
 class ActionTimeDTO {
     private int Actiontime;
+}
+
+@Getter
+class AuctionConnectBody {
+    private String token;
+    private String company;
 }
