@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.AuctionEntity;
 import com.example.demo.repository.AuctionRepository;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +24,19 @@ public class AuctionListController {
     AuctionRepository auctionRepository;
 
     @GetMapping(path = "/getauction/{company}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<JsonNode> getAuctionData(@PathVariable String company) {
+    public List<ObjectNode> getAuctionData(@PathVariable String company) {
 
         List<AuctionEntity> res = auctionRepository.findByCompany(company);
-        List<JsonNode> result = new ArrayList<>();
+        List<ObjectNode> result = new ArrayList<>();
 
         res.forEach((item) -> {
             try {
-                result.add(new ObjectMapper().readTree(item.getAuctionDetail()));
+                ObjectNode node = (ObjectNode) new ObjectMapper().readTree(item.getAuctionDetail());
+                if (node.isObject()) {
+                    ObjectNode objectNode = (ObjectNode) node;
+                    objectNode.put("repairId", item.getAuctionKey());
+                }
+                result.add(node);
             } catch (Exception e) {
             }
         });
