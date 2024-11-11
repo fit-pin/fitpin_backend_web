@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-
 import com.example.demo.controller.AppNotificationController;
+import com.example.demo.entity.AuctionEntity;
 import com.example.demo.repository.AuctionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -110,6 +110,11 @@ public class AuctionBroadcastService {
         ActionDTOMappper data = auctionData.getActionData();
 
         String auctionData = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(data);
-        repository.insertOrUpdate(data.getAuctionId(), lastPrice.getCompany(), auctionData);
+
+        AuctionEntity entity = new AuctionEntity();
+        entity.setAuctionId(data.getAuctionId());
+        entity.setCompany(lastPrice.getCompany());
+        entity.setAuctionDetail(auctionData);
+        repository.save(entity);
     }
 }
