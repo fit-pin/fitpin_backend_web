@@ -20,17 +20,23 @@ import lombok.extern.slf4j.Slf4j;
 
 /** 서버가 보내는 메시지 */
 class SendURL {
-	/** 수선 페이지를 접속한경우 기존에 하고있던 경매를 보냄 */
-	public static final String SendRepairList = "/action/repair/connect";
+	/**
+	 * 수선 페이지를 접속한경우 기존에 하고있던 경매를 보냄
+	 * 
+	 * @implNote 원본주소: /action/repair/connect/{token}
+	 */
+	public static final String SendRepairList = "/action/repair/connect/";
 	/** 고객이 수선을 요청한경우 보내는 메시지 */
 	public static final String SendBuyItem = "/action/repair/buyItem";
+	/** 경매가 끝난경우 수선페이지에 보내는 메시지 */
+	public static final String SendEndItem = "/action/repair/endItem";
 
 	/**
 	 * 경매에 진행에 필요한 정보 요청 URL
 	 * 
-	 * @implNote 원본주소: /action/Auction/{auctionId}
+	 * @implNote 원본주소: /action/auction/{auctionId}
 	 */
-	public static final String SendRoomData = "/action/Auction/";
+	public static final String SendRoomData = "/action/auction/";
 
 	/** SendRoomData 하위 URL들 */
 	static class SendRoom {
@@ -39,7 +45,7 @@ class SendURL {
 		 * 
 		 * @implNote 원본주소: /roomData/{token}
 		 */
-		public static final String RoomData = "/roomData/";
+		public static final String RoomData = "/roomdata/";
 		/** 경매 호가 전송 */
 		public static final String Price = "/price";
 		/** 경매 남은시간 정송 */
@@ -53,9 +59,9 @@ class RecvURL {
 	public static final String RepairConnect = "/repair/connect";
 
 	/** 경매 접속 */
-	public static final String AuctionConnect = "/Auction/{auctionId}/connect";
+	public static final String AuctionConnect = "/auction/{auctionId}/connect";
 	/** 경매 호가 제시 */
-	public static final String AuctionPrice = "/Auction/{auctionId}/price";
+	public static final String AuctionPrice = "/auction/{auctionId}/price";
 }
 
 @Controller
@@ -83,6 +89,7 @@ public class WebScoketController {
 					log.info(id + ":  경매 종료");
 					// 경매 종료 시 Map 에서 지우서 GC가 메모리 할당을 해제 하도록 함
 					auctionRoom.remove(id);
+					messagingTemplate.convertAndSend(SendURL.SendEndItem, id);
 				}, appNotificationController);
 			}
 			room.sendAuctionData(body);
@@ -90,7 +97,8 @@ public class WebScoketController {
 			log.info(auctionId + ": 방이 존재하지 않음");
 			AuctionData undefinedData = new AuctionData();
 			undefinedData.setState(State.AUCTION_UNDEFINDE.name());
-			messagingTemplate.convertAndSend(SendURL.SendRoomData + body.getToken(), undefinedData);
+			messagingTemplate.convertAndSend(
+					SendURL.SendRoomData + auctionId + SendURL.SendRoom.RoomData + body.getToken(), undefinedData);
 		}
 	}
 
@@ -101,7 +109,8 @@ public class WebScoketController {
 		auctionRoom.forEach((k, v) -> {
 			list.add(v.getRepair());
 		});
-		messagingTemplate.convertAndSend(SendURL.SendRepairList, list);
+
+		messagingTemplate.convertAndSend(SendURL.SendRepairList + body.getToken(), list);
 	}
 
 	@MessageMapping(RecvURL.AuctionPrice)

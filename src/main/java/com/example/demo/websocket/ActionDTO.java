@@ -1,6 +1,6 @@
 package com.example.demo.websocket;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.lang.NonNull;
@@ -63,8 +63,8 @@ public class ActionDTO {
 @Getter
 @AllArgsConstructor
 class Repairlist {
-    private AuctionData auctionData;
-    private HashMap<String, String> userList;
+    private AuctionData auction;
+    private ArrayList<String> userList;
 }
 
 @Getter

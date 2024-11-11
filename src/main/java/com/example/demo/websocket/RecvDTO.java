@@ -20,6 +20,7 @@ public class RecvDTO {
 @Getter
 @Setter
 class RecvPrice {
+    private int auctionId;
     private String token;
     private String company;
     private int price;

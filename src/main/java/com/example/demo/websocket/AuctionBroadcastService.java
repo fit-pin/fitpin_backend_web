@@ -1,7 +1,7 @@
 package com.example.demo.websocket;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -10,12 +10,12 @@ import com.example.demo.controller.AppNotificationController;
 enum State {
     // 처음 생성시 (기본값)
     AUCTION_CREATE,
+    // 경매가 진행중인 경우
+    AUCTION_PROGRESS,
     // 경매 끝날시
     AUCTION_END,
     // 경매가 종료된 방에 들어오거나, 유효하지 않는경우
     AUCTION_UNDEFINDE,
-    // 같은 업체로 들어온 경우
-    AUCTION_DUPLICATE
 }
 
 public class AuctionBroadcastService {
@@ -29,12 +29,12 @@ public class AuctionBroadcastService {
 
     private RecvPrice lastPrice;
 
-    private HashMap<String, String> userList = new HashMap<>();
+    private ArrayList<String> userList = new ArrayList<>();
 
     public AuctionBroadcastService(AuctionData auctionData, SimpMessagingTemplate messagingTemplate) {
         this.auctionData = auctionData;
         this.messagingTemplate = messagingTemplate;
-        this.sendUrl+= auctionData.getActionData().getAuctionId();
+        this.sendUrl += auctionData.getActionData().getAuctionId();
         this.lastPrice = new RecvPrice();
         lastPrice.setPrice(auctionData.getActionData().getPitPrice());
         lastPrice.setItemName(auctionData.getActionData().getItemName());
@@ -54,26 +54,13 @@ public class AuctionBroadcastService {
 
     /** 유저 접속 시 */
     public void sendAuctionData(AuctionConnectBody body) {
-        // 최초 접속자이고 경매 호가가 비어있는 경우 최초 접속자가 수선 낙찰
+        messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.RoomData + body.getToken(), auctionData);
         if (userList.isEmpty()) {
             lastPrice.setCompany(body.getCompany());
             lastPrice.setToken(body.getToken());
+            auctionData.setState(State.AUCTION_PROGRESS.name());
         }
-
-        String user = userList.get(body.getToken());
-        if (user == null) {
-            messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.RoomData + body.getToken(), auctionData);
-        } else {
-            // 이미 존재하는 유저면 AUCTION_DUPLICATE 만 반환
-
-            /*
-             * TODO: 원래라면은 토큰 뿐 아니라 업체명도 검증하야 하는데
-             * 혹시 몰라서 그냥 토큰으로만 검증함, 따라서 로그인만 따로 해주면 같은 계정이라도 정상작동함
-             */
-            AuctionData duplicate = new AuctionData();
-            duplicate.setState(State.AUCTION_DUPLICATE.name());
-            messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.RoomData + body.getToken(), duplicate);
-        }
+        userList.add(body.getCompany());
     }
 
     public void sendPrice(RecvPrice body) {
@@ -81,6 +68,10 @@ public class AuctionBroadcastService {
         if (lastPrice.getPrice() > body.getPrice()) {
             body.setTime(LocalDateTime.now());
             messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.Price, body);
+
+            // 수선 페이지 에서도 이걸 갱신 받을 수 있게 설정
+            auctionData.getActionData().setPitPrice(body.getPrice());
+
             lastPrice = body;
         }
     }
@@ -92,17 +83,19 @@ public class AuctionBroadcastService {
                 ActionTimeDTO time = new ActionTimeDTO(AUCTION_TIME);
                 for (int i = time.getActiontime(); i >= 0; i--) {
                     time.setActiontime(i);
-                    messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.Price, time.getActiontime());
+                    messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.Time, time.getActiontime());
                     Thread.sleep(1000);
                 }
-            } catch (InterruptedException e) {
+                AuctionData endPrice = new AuctionData();
+                endPrice.setRecvPrice(lastPrice);
+                endPrice.setState(State.AUCTION_END.name());
+
+                // /all 경로로 전송 (* 같은 와일드 카드 허용 안함)
+                messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.RoomData + "all", endPrice);
+                appNotificationController.sendNotification(lastPrice, auctionData.getActionData().getUserEmail());
+            } catch (Exception e) {
             }
 
-            // * 로 모든 클라이언트에게 전송
-            AuctionData endAuctionData = new AuctionData();
-            endAuctionData.setRecvPrice(lastPrice);
-            messagingTemplate.convertAndSend(sendUrl + "/roomData/*", lastPrice);
-            appNotificationController.sendNotification(lastPrice, auctionData.getActionData().getUserEmail());
             listener.recvAuctionEnd(auctionData.getActionData().getAuctionId());
         }).start();
     }
