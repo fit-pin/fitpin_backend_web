@@ -97,7 +97,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/join","/check-username","/users/**").permitAll()
-                        .requestMatchers("/token","/inquiry/**","list","/inquiryImg/**").permitAll()
+                        .requestMatchers("/token","/inquiry/**","list","/inquiryImg/**", "/getauction/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
                         // 웹 소켓 안되는게 이거 문제였누...

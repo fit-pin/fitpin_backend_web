@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** 경매후 수선가격 푸쉬알림을 위한 SSE 통신 컨트롤러 */
+/** 경매 후 수선가격 푸쉬알림을 위한 SSE 통신 컨트롤러 */
 @RestController
 @Slf4j
 public class AppNotificationController {

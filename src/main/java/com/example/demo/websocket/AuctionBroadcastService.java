@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.example.demo.controller.AppNotificationController;
+import com.example.demo.repository.AuctionRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 enum State {
     // 처음 생성시 (기본값)
@@ -24,6 +26,7 @@ public class AuctionBroadcastService {
     private AuctionData auctionData;
     private SimpMessagingTemplate messagingTemplate;
     private String sendUrl = SendURL.SendRoomData;
+    private AuctionRepository repository;
 
     private boolean activete = false;
 
@@ -31,9 +34,11 @@ public class AuctionBroadcastService {
 
     private ArrayList<String> userList = new ArrayList<>();
 
-    public AuctionBroadcastService(AuctionData auctionData, SimpMessagingTemplate messagingTemplate) {
+    public AuctionBroadcastService(AuctionData auctionData, SimpMessagingTemplate messagingTemplate,
+            AuctionRepository repository) {
         this.auctionData = auctionData;
         this.messagingTemplate = messagingTemplate;
+        this.repository = repository;
         this.sendUrl += auctionData.getActionData().getAuctionId();
         this.lastPrice = new RecvPrice();
         lastPrice.setPrice(auctionData.getActionData().getPitPrice());
@@ -93,6 +98,7 @@ public class AuctionBroadcastService {
                 // /all 경로로 전송 (* 같은 와일드 카드 허용 안함)
                 messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.RoomData + "all", endPrice);
                 appNotificationController.sendNotification(lastPrice, auctionData.getActionData().getUserEmail());
+                saveDB();
             } catch (Exception e) {
             }
 
@@ -100,4 +106,10 @@ public class AuctionBroadcastService {
         }).start();
     }
 
+    private void saveDB() throws Exception {
+        ActionDTOMappper data = auctionData.getActionData();
+
+        String auctionData = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(data);
+        repository.insertOrUpdate(data.getAuctionId(), lastPrice.getCompany(), auctionData);
+    }
 }

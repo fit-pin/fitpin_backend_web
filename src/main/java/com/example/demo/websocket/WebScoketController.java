@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.example.demo.controller.AppNotificationController;
+import com.example.demo.repository.AuctionRepository;
 import com.example.demo.websocket.ActionDTO.ItemList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -75,6 +76,9 @@ public class WebScoketController {
 
 	@Autowired
 	AppNotificationController appNotificationController;
+
+	@Autowired
+	AuctionRepository auctionRepository;
 
 	// 클라이언트 메시지가 전송되는 곳
 	// 이때 경로는 setApplicationDestinationPrefixes+설정값 즉 /recv/
@@ -152,7 +156,7 @@ public class WebScoketController {
 					auctionData.setActionData(actionDTO);
 
 					auctionRoom.put(conut,
-							new AuctionBroadcastService(auctionData, messagingTemplate));
+							new AuctionBroadcastService(auctionData, messagingTemplate, auctionRepository));
 
 					conut++;
 					return actionDTO;
