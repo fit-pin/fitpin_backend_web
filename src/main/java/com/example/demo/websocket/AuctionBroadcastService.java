@@ -77,7 +77,8 @@ public class AuctionBroadcastService {
             // 수선 페이지 에서도 이걸 갱신 받을 수 있게 설정
             auctionData.getActionData().setPitPrice(body.getPrice());
 
-            lastPrice = body;
+            lastPrice.setPrice(body.getPrice());
+            lastPrice.setCompany(body.getCompany());
         }
     }
 
