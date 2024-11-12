@@ -19,7 +19,7 @@ public class AppNotificationController {
     @GetMapping(value = "/auction_listener/{appUserEmail}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     private SseEmitter appNotification(@PathVariable(required = true) String appUserEmail) {
         log.info(appUserEmail + ": SSE 새션 연결");
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(-1L);
         emitter.onCompletion(() -> {
             log.info(appUserEmail + ": SSE 세션 연결 끊김");
             emitterMap.remove(appUserEmail);
