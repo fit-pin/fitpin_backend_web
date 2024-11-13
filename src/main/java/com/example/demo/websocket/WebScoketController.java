@@ -39,6 +39,9 @@ class SendURL {
 	 */
 	public static final String SendRoomData = "/action/auction/";
 
+	/**관리자 경매 종료 요청 완료 알림 */
+	public static final String SendForceEnd = "/action/admin/end";
+
 	/** SendRoomData 하위 URL들 */
 	static class SendRoom {
 		/**
@@ -61,8 +64,12 @@ class RecvURL {
 
 	/** 경매 접속 */
 	public static final String AuctionConnect = "/auction/{auctionId}/connect";
+
 	/** 경매 호가 제시 */
 	public static final String AuctionPrice = "/auction/{auctionId}/price";
+
+	/**  관리자 경매 종료 요청 */
+	public static final String ForceEnd = "/admin/end/{auctionId}";
 }
 
 @Controller
@@ -124,6 +131,21 @@ public class WebScoketController {
 			log.info(auctionId + " 에서 제시된 호가:" + body.getPrice());
 			room.sendPrice(body);
 		}
+	}
+
+	@MessageMapping(RecvURL.ForceEnd)
+	private void forceEndReqests(@DestinationVariable int auctionId) {
+		log.info("들어옴");
+		AuctionBroadcastService room = auctionRoom.get(auctionId);
+		HashMap<String, Object> response = new HashMap<>();
+		if (room != null) {
+			room.forceReqestEnd();
+			response.put("stats", true);
+			response.put("auctionId", auctionId);
+		} else {
+			response.put("stats", false);
+		}
+		messagingTemplate.convertAndSend(SendURL.SendForceEnd, response);
 	}
 
 	// 고객이 의류를 구매한 경우 구독한 모든 클라이언트에게 전달

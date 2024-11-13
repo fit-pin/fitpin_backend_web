@@ -29,6 +29,7 @@ public class AuctionBroadcastService {
     private AuctionRepository repository;
 
     private boolean activete = false;
+    private boolean reqestEnd = false;
 
     private RecvPrice lastPrice;
 
@@ -55,6 +56,11 @@ public class AuctionBroadcastService {
 
     public boolean isActivete() {
         return this.activete;
+    }
+
+    // 수선 관리자 페이지에서 강제 종료 요청
+    public void forceReqestEnd() {
+        this.reqestEnd = true;
     }
 
     /** 유저 접속 시 */
@@ -88,6 +94,10 @@ public class AuctionBroadcastService {
             try {
                 ActionTimeDTO time = new ActionTimeDTO(AUCTION_TIME);
                 for (int i = time.getActiontime(); i >= 0; i--) {
+                    // 종료 요청 들어오면 종료
+                    if (reqestEnd) {
+                        break;
+                    }
                     time.setActiontime(i);
                     messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.Time, time.getActiontime());
                     Thread.sleep(1000);
