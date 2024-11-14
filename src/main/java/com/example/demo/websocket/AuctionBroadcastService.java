@@ -105,11 +105,11 @@ public class AuctionBroadcastService {
                 AuctionData endPrice = new AuctionData();
                 endPrice.setRecvPrice(lastPrice);
                 endPrice.setState(State.AUCTION_END.name());
+                saveDB(); // DB 저장
 
                 // /all 경로로 전송 (* 같은 와일드 카드 허용 안함)
                 messagingTemplate.convertAndSend(sendUrl + SendURL.SendRoom.RoomData + "all", endPrice);
                 appNotificationController.sendNotification(lastPrice, auctionData.getActionData().getUserEmail());
-                saveDB();
             } catch (Exception e) {
             }
 
