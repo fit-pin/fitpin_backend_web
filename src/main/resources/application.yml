@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:33306/fitpin_web
-    username: admin
-    password: hmmrds0506
+    url:
+    username:
+    password:
 
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
@@ -33,8 +33,8 @@ server:
     max-swallow-size: 10MB  # 톰캣의 최대 요청 크기 (10MB)
 
 ssh:
-  host: fitpitback.kro.kr
+  host:
   ssh_port: 22
-  user: ubuntu
-  private_key: src/main/resources/dbssh/AWSkey.ppk
+  user:
+  private_key:
   database_port: 3307
