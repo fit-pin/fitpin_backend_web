@@ -42,6 +42,9 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
+	// mysql 추가
+	implementation 'com.mysql:mysql-connector-j'
+
 	//SSH DB 연동
 	implementation 'com.github.mwiede:jsch:0.2.17'
 	implementation group: 'org.glassfish.web', name: 'jakarta.servlet.jsp.jstl', version: '2.0.0'
